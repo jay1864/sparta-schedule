@@ -34,7 +34,7 @@ public class ScheduleService {
     }
 
     // 선택한 일정 단건 조회
-    public ScheduleResponseDto getSchedule(Long scheduleId) {
+    public ScheduleResponseDto getSchedule(long scheduleId) {
         Schedule entity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
         return ScheduleResponseDto.of(entity);
     }
@@ -46,7 +46,7 @@ public class ScheduleService {
     }
 
     // 선택한 일정 수정
-    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto updateSchedule(long scheduleId, ScheduleRequestDto requestDto) {
         Schedule entity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
 
         // 비밀번호 일치 확인
@@ -68,5 +68,17 @@ public class ScheduleService {
         // updateEntity -> responseDto
         Schedule updateEntity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
         return ScheduleResponseDto.of(updateEntity);
+    }
+
+    // 선택한 일정 삭제
+    public void deleteSchedule(long scheduleId, ScheduleRequestDto requestDto) {
+        Schedule entity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        // 비밀번호 일치 확인
+        if(!entity.getPw().equals(requestDto.getPw())) {
+            throw new RuntimeException("Wrong password");
+        }
+
+        scheduleRepository.delete(scheduleId);
     }
 }

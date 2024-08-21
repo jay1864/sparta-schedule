@@ -48,7 +48,7 @@ public class ScheduleRepository {
     }
 
     // 주어진 id로 DB 조회
-    public Optional<Schedule> findById(Long scheduleId) {
+    public Optional<Schedule> findById(long scheduleId) {
         String sql = "SELECT * FROM schedule WHERE id = ?";
         return jdbcTemplate.query(sql, scheduleRowMapper(), scheduleId).stream().findFirst();
     }
@@ -86,6 +86,12 @@ public class ScheduleRepository {
         params.add(String.valueOf(entity.getId())); // id값은 long이므로 형변환
 
         jdbcTemplate.update(sql, params.toArray());
+    }
+
+    // 해당 튜플 DB에서 삭제
+    public void delete(long scheduleId) {
+        String sql = "DELETE FROM schedule WHERE id = ?";
+        jdbcTemplate.update(sql, scheduleId);
     }
 
     private RowMapper<Schedule> scheduleRowMapper() {

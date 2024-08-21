@@ -22,7 +22,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/api/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable Long scheduleId) {
+    public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable long scheduleId) {
         ScheduleResponseDto responseDto = scheduleService.getSchedule(scheduleId);
         return ResponseEntity.ok(responseDto);
     }
@@ -34,9 +34,14 @@ public class ScheduleController {
     }
 
     @PutMapping("/api/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long scheduleId, @RequestBody ScheduleRequestDto requestDto) {
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable long scheduleId, @RequestBody ScheduleRequestDto requestDto) {
         ScheduleResponseDto responseDto = scheduleService.updateSchedule(scheduleId, requestDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping("/api/schedules/{scheduleId}")
+    public void deleteSchedule(@PathVariable long scheduleId, @RequestBody ScheduleRequestDto requestDto) {
+        scheduleService.deleteSchedule(scheduleId, requestDto);
     }
 
 }
