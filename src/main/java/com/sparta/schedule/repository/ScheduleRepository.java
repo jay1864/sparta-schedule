@@ -3,9 +3,7 @@ package com.sparta.schedule.repository;
 import com.sparta.schedule.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,8 +20,7 @@ public class ScheduleRepository {
 
     // DB 저장
     public Schedule save(Schedule entity) {
-        String sql = "INSERT INTO schedule(schedule, manager, pw, created_at, updated_at) values(?,?,?,?,?)";   // query
-
+        String sql = "INSERT INTO schedule(schedule, manager, pw, created_at, updated_at) values(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder(); // insert 후 자동 생성된 id를 반환받기 위해 KeyHolder의 GeneratedKeyHolder 객체 사용
 
 //        DB 컬럼명과 entity 객체 속성 이름이 달라서(작성일, 수정일) 에러 발생! 나중에 db 수정 후 사용해보는걸로.
@@ -39,11 +37,29 @@ public class ScheduleRepository {
             return params;
         }, keyHolder);
 
-
         // DB Insert 후 받아온 기본키 확인
         long id = Objects.requireNonNull(keyHolder.getKey()).longValue(); // requireNonNull : 입력된 값이 null 이면 NullPointerException 발생, 아니면 그대로 반환
         entity.changeId(id);
 
         return entity;
     }
+
+    // 주어진 id로 DB 조회
+    public Optional<Schedule> findById(Long scheduleId) {
+        String sql = "SELECT * FROM schedule WHERE id = ?";
+        return jdbcTemplate.query(sql, scheduleRowMapper(), scheduleId).stream().findFirst();
+    }
+
+    private RowMapper<Schedule> scheduleRowMapper() {
+        return (rs, rowNum) ->
+                new Schedule(
+                        rs.getLong("id"),
+                        rs.getString("schedule"),
+                        rs.getString("manager"),
+                        rs.getString("pw"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
+                );
+    }
+
 }

@@ -16,6 +16,7 @@ public class ScheduleService {
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         // requestDto -> Entity
         Schedule entity = new Schedule(requestDto);
+
         // DB 저장, Entity -> responseDto
         return ScheduleResponseDto.of(scheduleRepository.save(entity));
         
@@ -27,5 +28,11 @@ public class ScheduleService {
         // Entity -> responseDto
         return ScheduleResponseDto.of(returnEntity);
         */
+    }
+
+    // 선택한 일정 단건 조회
+    public ScheduleResponseDto getSchedule(Long scheduleId) {
+        Schedule entity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
+        return ScheduleResponseDto.of(entity);
     }
 }
