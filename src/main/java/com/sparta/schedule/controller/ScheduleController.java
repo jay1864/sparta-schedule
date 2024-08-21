@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController // @Controller + @ResponseBody = 해당 클래스의 모든 메서드에 @ResponseBody 애너테이션 추가
 @RequiredArgsConstructor // final이나 @NonNull으로 선언된 필드만을 파라미터로 받는 생성자를 생성 (의존성 주입)
 public class ScheduleController {
@@ -23,6 +25,12 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable Long scheduleId) {
         ScheduleResponseDto responseDto = scheduleService.getSchedule(scheduleId);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/api/schedules")
+    public ResponseEntity<List<ScheduleResponseDto>> getSchedules(@RequestParam(required = false) String date, @RequestParam(required = false) String manager) {
+        List<ScheduleResponseDto> responseDtos = scheduleService.getSchedules(date, manager);
+        return ResponseEntity.ok(responseDtos);
     }
 
 }

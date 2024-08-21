@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -49,6 +52,30 @@ public class ScheduleRepository {
         String sql = "SELECT * FROM schedule WHERE id = ?";
         return jdbcTemplate.query(sql, scheduleRowMapper(), scheduleId).stream().findFirst();
     }
+
+    // date, manager로 DB 조회
+    public List<Schedule> search(String date, String manager) {
+        // date, manager 유무에 따라 쿼리가 추가될수도 있기 때문에 String 대신 추가가 가능한 StringBuilder를 사용한다.
+        StringBuilder sql = new StringBuilder("SELECT * FROM schedule WHERE id>0");
+        // 추가된 쿼리의 ?에 들어갈 param을 저장한다.
+        List<String> params = new ArrayList<>();
+
+        if(date != null && !date.isEmpty()) {   // date가 있을 경우
+            LocalDate searchDate = LocalDate.parse(date);
+            sql.append(" AND DATE(updated_at) = ?");
+            params.add(searchDate.toString());
+        }
+
+        if(manager != null && !manager.isEmpty()) { // manager가 있을 경우
+            sql.append(" AND manager = ?");
+            params.add(manager);
+        }
+
+        sql.append(" ORDER BY updated_at DESC");    // 정렬 쿼리
+
+        return jdbcTemplate.query(sql.toString(), scheduleRowMapper(), params.toArray());
+    }
+
 
     private RowMapper<Schedule> scheduleRowMapper() {
         return (rs, rowNum) ->

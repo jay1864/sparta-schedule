@@ -7,6 +7,9 @@ import com.sparta.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -34,5 +37,10 @@ public class ScheduleService {
     public ScheduleResponseDto getSchedule(Long scheduleId) {
         Schedule entity = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found"));
         return ScheduleResponseDto.of(entity);
+    }
+
+    public List<ScheduleResponseDto> getSchedules(String date, String manager) {
+        List<Schedule> entities = scheduleRepository.search(date, manager);
+        return entities.stream().map(ScheduleResponseDto::of).collect(Collectors.toList());
     }
 }
