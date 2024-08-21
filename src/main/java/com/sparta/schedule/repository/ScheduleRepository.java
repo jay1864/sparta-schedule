@@ -76,6 +76,17 @@ public class ScheduleRepository {
         return jdbcTemplate.query(sql.toString(), scheduleRowMapper(), params.toArray());
     }
 
+    // DB 수정
+    public void update(Schedule entity) {
+        String sql = "UPDATE schedule SET schedule = ?, manager = ?, updated_at = NOW() WHERE id = ?";
+
+        List<String> params = new ArrayList<>();
+        params.add(entity.getSchedule());
+        params.add(entity.getManager());
+        params.add(String.valueOf(entity.getId())); // id값은 long이므로 형변환
+
+        jdbcTemplate.update(sql, params.toArray());
+    }
 
     private RowMapper<Schedule> scheduleRowMapper() {
         return (rs, rowNum) ->

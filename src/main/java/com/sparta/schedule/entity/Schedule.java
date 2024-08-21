@@ -31,5 +31,15 @@ public class Schedule {
     public void changeId(long id) {
         this.id = id;
     }
+    
+    // 일정 내용 변경
+    public void changeSchedule(String schedule) {
+        this.schedule = schedule;
+    }
+    
+    // 담당자 변경
+    public void changeManager(String manager) {
+        this.manager = manager;
+    }
 
 }
